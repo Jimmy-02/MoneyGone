@@ -7,17 +7,16 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "lint": "turbo lint",
-    "type-check": "turbo type-check"
-
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.60.1",
     "@typescript-eslint/parser": "^8.60.1",
     "eslint": "^10.4.1",
-    "turbo": "latest",
+    "turbo": "^1.13.4",
     "typescript": "^6.0.3"
   }
 }
