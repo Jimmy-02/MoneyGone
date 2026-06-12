@@ -6,7 +6,7 @@ import path from 'path';
 import { clerkWebhookHandler } from './webhooks/clerk';
 import {clerkMiddleware} from "@clerk/express";
 import { getEnv } from "./lib/env";
-import keepAliveCron from "./lib/cron"
+import wakeRender from "./lib/cron"
 import meRouter from "./routes/meRouter";
 import productRouter from "./routes/productRouter";
 
@@ -52,6 +52,6 @@ if (fs.existsSync(publicDir)) {
 app.listen(env.PORT, () => {
   console.log('API server is running on port ' + env.PORT);
   if(env.NODE_ENV === "production") {
-    keepAliveCron.start();
+    wakeRender.start();
   }
 });
