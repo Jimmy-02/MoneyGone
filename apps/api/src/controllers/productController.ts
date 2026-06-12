@@ -28,3 +28,45 @@ export async function listProducts(
     next(e);
   }
 }
+
+export async function getCategories(
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const rows = await db
+      .select({ category: products.category })
+      .from(products)
+      .where(eq(products.active, true));
+
+    const categories = [...new Set(rows.map((r) => r.category))].sort((a, b) =>
+      a.localeCompare(b),
+    );
+
+    res.json({ categories });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getProductBySlug(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const [row] = await db
+      .select()
+      .from(products)
+      .where(eq(products.slug, req.params.slug as string))
+      .limit(1);
+
+    if (!row || !row.active)
+      return res.status(404).json({ error: "Not found" });
+
+    res.json({ product: row });
+  } catch (e) {
+    next(e);
+  }
+}
