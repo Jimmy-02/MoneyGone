@@ -5,6 +5,14 @@
     "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "declaration": true,
+    "composite": true
+  },
+  "references": [
+    { "path": "apps/web" },
+    { "path": "apps/api" },
+    { "path": "packages/types" }
+  ],
+  "exclude": ["node_modules"]
 }
