@@ -5,7 +5,9 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "noEmit": true
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "types": ["vite/client"]
   },
   "references": [{ "path": "../../packages/types" }],
   "include": ["src"]
