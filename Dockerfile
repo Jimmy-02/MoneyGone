@@ -1,7 +1,7 @@
 # --- Stage 1: build the SPA (Vite) ---
 FROM node:22-bookworm-slim AS frontend-build
 WORKDIR /app
-COPY package.json package-lock.json turbo.json ./
+COPY package.json package-lock.json turbo.json tsconfig.json ./
 COPY apps/web/package.json ./apps/web/
 COPY packages/ ./packages/
 RUN npm install --no-audit --no-fund
@@ -16,7 +16,7 @@ RUN npm run build
 # --- Stage 2: compile the API (TypeScript ->JavaScript) ---
 FROM node:22-bookworm-slim AS backend-build
 WORKDIR /app
-COPY package.json package-lock.json turbo.json ./
+COPY package.json package-lock.json turbo.json tsconfig.json ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/ ./packages/
 RUN npm install --no-audit --no-fund
