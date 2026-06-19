@@ -61,6 +61,18 @@ if (fs.existsSync(publicDir)) {
 
 Sentry.setupExpressErrorHandler(app);
 
+app.use(
+  (_err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    const sentryId = (res as express.Response & { sentry?: string }).sentry;
+
+    res.status(500).json({
+      error: "Internal server error",
+      ...(sentryId !== undefined && { sentryId }),
+    });
+  },
+);
+
+
 app.listen(env.PORT, () => {
   console.log('API server is running on port ' + env.PORT);
   if(env.NODE_ENV === "production") {
