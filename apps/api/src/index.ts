@@ -12,6 +12,7 @@ import productRouter from "./routes/productRouter";
 import streamRouter from "./routes/streamRouter";
 import checkoutRouter from "./routes/checkoutRouter";
 import { polarWebhookHandler } from "./webhooks/polar";
+import * as Sentry from "@sentry/node";
 
 const env = getEnv();
 const app = express();
@@ -57,6 +58,8 @@ if (fs.existsSync(publicDir)) {
     res.sendFile(path.join(publicDir, "index.html"), (err) => next(err));
   });
 }
+
+Sentry.setupExpressErrorHandler(app);
 
 app.listen(env.PORT, () => {
   console.log('API server is running on port ' + env.PORT);
