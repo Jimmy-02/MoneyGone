@@ -13,6 +13,7 @@ import streamRouter from "./routes/streamRouter";
 import checkoutRouter from "./routes/checkoutRouter";
 import { polarWebhookHandler } from "./webhooks/polar";
 import * as Sentry from "@sentry/node";
+import { sentryClerkUserMiddleware } from "./middleware/sentryClerkUser";
 
 const env = getEnv();
 const app = express();
@@ -30,7 +31,7 @@ app.post("/webhooks/polar", rawJson, (req, res) => {
 app.use(express.json());
 app.use(cors());
 app.use(clerkMiddleware());
-
+app.use(sentryClerkUserMiddleware);
 app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
