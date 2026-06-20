@@ -4,6 +4,9 @@ import { isAdmin } from "../lib/roles";
 import { getAuth } from "@clerk/express";
 import { getEnv } from "../lib/env";
 import ImageKit from "@imagekit/nodejs";
+import { products } from "../db/schema";
+import { desc } from "drizzle-orm";
+import { db } from "../db";
 
 const env = getEnv();
 
@@ -38,6 +41,15 @@ export function getImageKitAuth(req: Request, res: Response, next: NextFunction)
             urlEndpoint: env.IMAGEKIT_URL_ENDPOINT,
         });
     } catch (error) {
+        next(error);
+    }
+}
+
+export async function listAdminProducts(_req: Request, res: Response, next: NextFunction) {
+    try{
+        const rows = await db.select().from(products).orderBy(desc(products.createdAt));;
+        res.json({products: rows});
+    }catch (error) {
         next(error);
     }
 }
