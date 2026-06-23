@@ -4,10 +4,11 @@ import { isAdmin } from "../lib/roles";
 import { getAuth } from "@clerk/express";
 import { getEnv } from "../lib/env";
 import ImageKit from "@imagekit/nodejs";
-import { products } from "../db/schema";
-import { desc, eq } from "drizzle-orm";
+import { orderItems, products } from "../db/schema";
+import { count, desc, eq } from "drizzle-orm";
 import { db } from "../db";
 import z from "zod";
+import { deleteImageKitAsset } from "../lib/imageKit";
 
 const env = getEnv();
 
@@ -135,31 +136,68 @@ export async function createAdminProduct(
   }
 }
 
-export async function updateAdminProduct(req: Request, res: Response, next: NextFunction) {
+export async function updateAdminProduct(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const parsed = productPatch.safeParse(req.body);
     if (!parsed.success) {
-      res.status(400).json({ error: "Invalid body", details: parsed.error.flatten() });
+      res
+        .status(400)
+        .json({ error: "Invalid body", details: parsed.error.flatten() });
       return;
     }
 
     const data = buildProductUpdateSet(parsed.data);
 
-    if(Object.keys(data).length === 0) {
+    if (Object.keys(data).length === 0) {
       res.status(400).json({ error: "No valid fields to update" });
       return;
     }
 
-    const [row] = await db.update(products).set(data).where(eq(products.id, req.params.id as string)).returning();
-    
+    const [row] = await db
+      .update(products)
+      .set(data)
+      .where(eq(products.id, req.params.id as string))
+      .returning();
+
     if (!row) {
       res.status(404).json({ error: "Product not found" });
       return;
     }
 
     res.json({ product: row });
-  }catch (e) {
+  } catch (e) {
     next(e);
   }
+}
 
+export async function deleteAdminProduct(req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = req.params.id as string;
+    const [existing] = await db.select().from(products).where(eq(products.id, id)).limit(1);
+    if (!existing) {
+      res.status(404).json({ error: "Not found" });
+      return;
+    }
+
+    const [countRow] = await db.select({ c: count() }).from(orderItems).where(eq(orderItems.productId, id));
+
+    if (Number(countRow?.c ?? 0) > 0) {
+      res.status(409).json({
+        error:
+          "This product is on one or more orders and cannot be deleted. Deactivate it instead.",
+      });
+      return;
+    }
+
+    await deleteImageKitAsset(env, existing.imageKitFileId);
+    await db.delete(products).where(eq(products.id, id));
+
+    res.json({ ok: true });
+  } catch (e) {
+    next(e);
+  }
 }
