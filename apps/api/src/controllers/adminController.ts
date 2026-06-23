@@ -174,16 +174,27 @@ export async function updateAdminProduct(
   }
 }
 
-export async function deleteAdminProduct(req: Request, res: Response, next: NextFunction) {
+export async function deleteAdminProduct(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const id = req.params.id as string;
-    const [existing] = await db.select().from(products).where(eq(products.id, id)).limit(1);
+    const [existing] = await db
+      .select()
+      .from(products)
+      .where(eq(products.id, id))
+      .limit(1);
     if (!existing) {
       res.status(404).json({ error: "Not found" });
       return;
     }
 
-    const [countRow] = await db.select({ c: count() }).from(orderItems).where(eq(orderItems.productId, id));
+    const [countRow] = await db
+      .select({ c: count() })
+      .from(orderItems)
+      .where(eq(orderItems.productId, id));
 
     if (Number(countRow?.c ?? 0) > 0) {
       res.status(409).json({
