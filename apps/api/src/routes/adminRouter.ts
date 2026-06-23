@@ -1,5 +1,5 @@
 import {Router} from "express";
-import { createAdminProduct, getImageKitAuth, listAdminProducts, requireAdmin, updateAdminProduct } from "../controllers/adminController";
+import { createAdminProduct, deleteAdminProduct, getImageKitAuth, listAdminProducts, requireAdmin, updateAdminProduct } from "../controllers/adminController";
 
 const router = Router();
 
@@ -9,5 +9,6 @@ router.get("/imagekit/auth",getImageKitAuth);
 router.get("/products", listAdminProducts);
 router.post("/products", createAdminProduct);
 router.put("/products/:id", updateAdminProduct);
+router.delete("/products/:id", deleteAdminProduct);
 
 export default router;
