@@ -1,4 +1,3 @@
-import './App.css'
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/react";
 
 function App() {
@@ -14,6 +13,9 @@ function App() {
           <UserButton />
         </Show>
       </header>
+
+      <p className="text-red-500" >hekjdakwd</p>
+      <button className="btn btn-primary">click me</button>
     </>
   );
 }
