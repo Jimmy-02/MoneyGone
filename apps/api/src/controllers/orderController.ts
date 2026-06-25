@@ -5,7 +5,10 @@ import { db } from "../db";
 import { orders, orderItems, products } from "../db/schema";
 import { isStaff } from "../lib/roles";
 import { getLocalUser } from "../lib/users";
+import { getEnv } from "../lib/env";
+import { streamUserId, streamChatDisplayName, getStreamChatServer } from "../lib/stream";
 
+const env = getEnv();
 
 export async function listOrders(req: Request, res: Response, next: NextFunction) {
     try {
@@ -120,6 +123,81 @@ export async function getOrder(
       .where(eq(orderItems.orderId, order.id));
 
     res.json({ order, items });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function createStreamChannel(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { userId, isAuthenticated } = getAuth(req);
+    if (!isAuthenticated || !userId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const server = getStreamChatServer(env);
+
+    const localUser = await getLocalUser(userId);
+    if (!localUser) {
+      res.status(503).json({ error: "Account not synced yet" });
+      return;
+    }
+
+    const [order] = await db
+      .select()
+      .from(orders)
+      .where(eq(orders.id, req.params.id as string))
+      .limit(1);
+
+    if (!order) {
+      res.status(404).json({ error: "Not found" });
+      return;
+    }
+
+    const isOwner = order.userId === localUser.id;
+    if (!isOwner && !isStaff(localUser.role)) {
+      res.status(404).json({ error: "Not found" });
+      return;
+    }
+
+    if (order.status !== "paid") {
+      res
+        .status(403)
+        .json({ error: "Order must be paid to open support chat" });
+      return;
+    }
+
+    const streamChatUserId = streamUserId(userId);
+
+    await server.upsertUser({
+      id: streamChatUserId,
+      name: streamChatDisplayName(
+        localUser.role,
+        localUser.displayName,
+        localUser.email,
+      ),
+    });
+
+    const channelId = `order-${order.id}`;
+    const channel = server.channel("messaging", channelId, {
+      name: `Support · order ${order.id.slice(0, 8)}`,
+      created_by_id: streamChatUserId,
+    });
+
+    await channel.create();
+
+    await channel.addMembers([streamChatUserId]);
+
+    res.json({
+      channelType: "messaging",
+      channelId,
+      streamUserId: streamChatUserId,
+    });
   } catch (e) {
     next(e);
   }
