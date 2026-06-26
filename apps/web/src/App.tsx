@@ -1,7 +1,10 @@
-import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/react";
+import { Show, SignInButton, SignUpButton, useAuth, UserButton } from "@clerk/react";
+import PageLoader from "./components/PageLoader";
 
 function App() {
-
+  const { isLoaded } = useAuth();
+  if (!isLoaded) return <PageLoader />;
+  
   return (
     <>
       <header>
