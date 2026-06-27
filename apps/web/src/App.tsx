@@ -1,12 +1,13 @@
 import { Show, SignInButton, SignUpButton, useAuth, UserButton } from "@clerk/react";
 import PageLoader from "./components/PageLoader";
+import Layout from "./components/Layout";
 
 function App() {
   const { isLoaded } = useAuth();
   if (!isLoaded) return <PageLoader />;
   
   return (
-    <>
+    <Layout>
       <header>
         <Show when="signed-out">
           <SignInButton mode="modal" />
@@ -19,7 +20,7 @@ function App() {
 
       <p className="text-red-500" >hekjdakwd</p>
       <button className="btn btn-primary">click me</button>
-    </>
+    </Layout>
   );
 }
 
