@@ -3,18 +3,31 @@ import * as Sentry from "@sentry/react";
 const raw = import.meta.env.VITE_API_URL;
 const base = typeof raw === "string" ? raw.replace(/\/+$/, "") : "";
 
-export async function apiFetch(path, opts = {}) {
+interface ApiFetchOptions {
+  getToken?: () => Promise<string | null | undefined>;
+  method?: string;
+  body?: unknown;
+}
+
+export async function apiFetch<T = unknown>(
+  path: string,
+  opts: ApiFetchOptions = {},
+): Promise<T> {
   const { getToken, method = "GET", body } = opts;
-  const headers = { "Content-Type": "application/json" };
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
 
   if (getToken) {
     const token = await getToken();
     if (token) {
-      headers.Authorization = `Bearer ${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
     }
   }
 
-  let res;
+  let res: Response;
+
   try {
     res = await fetch(`${base}${path}`, {
       method,
@@ -28,12 +41,10 @@ export async function apiFetch(path, opts = {}) {
       level: "error",
       data: { network: true },
     });
-
     Sentry.captureException(e, {
       tags: { "api.fetch": "network" },
       extra: { path, method },
     });
-
     throw e;
   }
 
@@ -52,7 +63,10 @@ export async function apiFetch(path, opts = {}) {
 
     if (res.status >= 500) {
       Sentry.captureException(err, {
-        tags: { "api.fetch": "http", "http.status": String(res.status) },
+        tags: {
+          "api.fetch": "http",
+          "http.status": String(res.status),
+        },
         extra: { path, method, status: res.status },
       });
     }
@@ -60,5 +74,5 @@ export async function apiFetch(path, opts = {}) {
     throw err;
   }
 
-  return data;
+  return data as T;
 }
