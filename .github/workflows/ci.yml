@@ -12,16 +12,17 @@ concurrency:
 
 permissions:
   contents: read
-  actions: read
-  security-events: write
 
 jobs:
   ci:
+    name: CI
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
+          
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -31,6 +32,14 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
       - name: Lint
         run: npm run lint
 
@@ -39,3 +48,11 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
+      - name: Detect secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
