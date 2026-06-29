@@ -9,5 +9,5 @@
     "composite": true
   },
   "references": [{ "path": "../../packages/types" }],
-  "include": ["src"]
+  "include": ["src", "src/scripts"]
 }
