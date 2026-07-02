@@ -1,8 +1,4 @@
-export interface Product {
-  id: string;
-  name: string;
-  category: string;
-}
+import type { Product } from "./product";
 
 export interface ProductsResponse {
   products: Product[];
