@@ -3,6 +3,7 @@ import { PlusIcon } from "lucide-react";
 import { IK_PRESETS, imageKitOptimizedUrl } from "../lib/imageKitUrl";
 import { useCart } from "../store/useCart";
 import type { Product } from "../types/product";
+import { formatPrice } from "../utils/format";
 
 type CatalogProductCardProps = {
   product: Product;
@@ -47,7 +48,7 @@ export function CatalogProductCard({ product }: CatalogProductCardProps) {
         </p>
         <div className="card-actions mt-auto items-center justify-between border-t border-base-200 pt-4">
           <span className="text-lg font-bold tabular-nums text-base-content">
-            ${(product.priceCents / 100).toFixed(2)} {product.currency}
+            {formatPrice(product.priceCents, product.currency)}
           </span>
           <button
             type="button"
