@@ -1,14 +1,11 @@
-import React from "react";
 import useCartPage from "../hooks/useCartPage";
 import { ShoppingCartIcon } from "lucide-react";
 import EmptyCart from "../components/EmptyCart";
 import { CartSkeleton } from "../components/LoadingSkeletons";
+import { PageError } from "../components/PageError";
 
 function CartPage() {
-  const {
-    items,
-    productsLoading,
-  } = useCartPage();
+  const { items, productsLoading, productsError } = useCartPage();
 
   return (
     <div className="text-left">
@@ -20,6 +17,8 @@ function CartPage() {
         <EmptyCart />
       ) : productsLoading ? (
         <CartSkeleton lines={items.length} />
+      ) : productsError ? (
+        <PageError message="Could not load product details. Refresh the page or try again shortly." />
       ) : null}
     </div>
   );
