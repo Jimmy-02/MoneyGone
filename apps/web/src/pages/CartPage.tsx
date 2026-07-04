@@ -1,11 +1,13 @@
-import React from 'react'
-import useCartPage from '../hooks/useCartPage';
-import { ShoppingCartIcon } from 'lucide-react';
-import EmptyCart from '../components/EmptyCart';
+import React from "react";
+import useCartPage from "../hooks/useCartPage";
+import { ShoppingCartIcon } from "lucide-react";
+import EmptyCart from "../components/EmptyCart";
+import { CartSkeleton } from "../components/LoadingSkeletons";
 
-function CartPage () {
-    const {
+function CartPage() {
+  const {
     items,
+    productsLoading,
   } = useCartPage();
 
   return (
@@ -15,10 +17,12 @@ function CartPage () {
         Cart
       </h1>
       {items.length === 0 ? (
-        <EmptyCart/>
+        <EmptyCart />
+      ) : productsLoading ? (
+        <CartSkeleton lines={items.length} />
       ) : null}
     </div>
-  )
+  );
 }
 
-export default CartPage
+export default CartPage;
