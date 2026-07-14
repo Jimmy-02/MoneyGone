@@ -2,7 +2,13 @@ import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@clerk/react";
 import { apiFetch } from "../lib/api.js";
-import {  OrderDetailResponse } from "../types/order.js";
+import type { OrderDetailResponse, Order, OrderItem } from "../types/order.js";
+
+export interface OrderDetailContext {
+  order: Order;
+  items: OrderItem[];
+  paid: boolean;
+}
 
 export function useOrderDetailPage() {
   const { id } = useParams();
