@@ -14,7 +14,6 @@ export interface OrderItem {
   quantity: number;
   unitPriceCents: number;
   product?: Product;
-  
 }
 
 export interface Order {
@@ -32,7 +31,6 @@ export interface Order {
 
 export interface OrdersResponse {
   orders: Order[];
-  
 }
 
 export type OrderPreviewSize = keyof typeof SIZES;
@@ -47,3 +45,7 @@ export interface OrderPreviewProps {
   size?: OrderPreviewSize;
 }
 
+export interface OrderDetailResponse {
+  order: Order;
+  items: OrderItem[];
+}

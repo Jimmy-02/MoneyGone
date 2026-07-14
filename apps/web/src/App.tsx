@@ -7,6 +7,8 @@ import CartPage from "./pages/CartPage";
 import OrdersPage from "./pages/OrdersPage";
 import CheckoutReturnPage from "./pages/CheckoutReturnPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import OrderDetailPage from "./pages/OrderDetailPage";
+import OrderSummaryPage from "./pages/OrderSummaryPage";
 
 function App() {
   const { isLoaded, isSignedIn } = useAuth();
@@ -23,6 +25,10 @@ function App() {
           element={isSignedIn ? <OrdersPage /> : <Navigate to={"/"} replace />}
         />
         <Route path="/checkout/return" element={<CheckoutReturnPage />} />
+
+        <Route path="/orders/:id" element={<OrderDetailPage />}>
+          <Route index element={<OrderSummaryPage />} />
+        </Route>
       </Routes>
     </Layout>
   );
