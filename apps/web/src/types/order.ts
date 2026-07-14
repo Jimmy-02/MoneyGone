@@ -49,3 +49,4 @@ export interface OrderDetailResponse {
   order: Order;
   items: OrderItem[];
 }
+
