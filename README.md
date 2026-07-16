@@ -1,5 +1,7 @@
 # MoneyGone
 
+![GitHub last commit](https://img.shields.io/github/last-commit/Jimmy-02/MoneyGone)  ![GitHub Repo stars](https://img.shields.io/github/stars/Jimmy-02/MoneyGone)  ![GitHub Issues](https://img.shields.io/github/issues/Jimmy-02/MoneyGone)  ![GitHub repo size](https://img.shields.io/github/repo-size/Jimmy-02/MoneyGone)  ![GitHub top language](https://img.shields.io/github/languages/top/Jimmy-02/MoneyGone)
+
 MoneyGone is a full-stack e-commerce application built with a modern JavaScript and TypeScript ecosystem. The project follows a monorepo architecture powered by Turborepo, separating the frontend and backend into independent applications while sharing a single repository.
 
 The application provides a complete shopping experience, including authentication, product browsing, shopping cart management, checkout, order history, and an administration dashboard for managing products.
