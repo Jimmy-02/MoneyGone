@@ -17,7 +17,7 @@ export interface OrderItem {
 }
 
 export interface Order {
-  previewItems: never[];
+  previewItems: OrderPreviewItem[];
   id: string;
   userId: string;
   status: OrderStatus;
@@ -29,15 +29,21 @@ export interface Order {
   items: OrderItem[];
 }
 
+export interface OrderSummary extends Order {
+  previewItems: OrderPreviewItem[];
+}
+
 export interface OrdersResponse {
-  orders: Order[];
+  orders: OrderSummary[];
 }
 
 export type OrderPreviewSize = keyof typeof SIZES;
 
 export interface OrderPreviewItem {
+  name: string;
   slug: string;
   imageUrl?: string | null;
+  quantity: number;
 }
 
 export interface OrderPreviewProps {
@@ -50,3 +56,8 @@ export interface OrderDetailResponse {
   items: OrderItem[];
 }
 
+export interface OrderOutletContext {
+  order: Order;
+  items: OrderItem[];
+  paid: boolean;
+}
